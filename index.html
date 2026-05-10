@@ -1,0 +1,1244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PrajnaGov — AI Safety, Security & Governance as a Service</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════
+   RESET & TOKENS
+═══════════════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --navy:     #0c1a35;
+  --navy2:    #152644;
+  --navy3:    #1b3a6b;
+  --teal:     #0d9488;
+  --teal2:    #0f766e;
+  --teal3:    #ccfbf1;
+  --gold:     #c9a84c;
+  --gold2:    #e8c96d;
+  --gold3:    #faf0d0;
+  --white:    #ffffff;
+  --offwhite: #f7f4ee;
+  --slate:    #64748b;
+  --slate2:   #94a3b8;
+  --light:    #e2eaf6;
+  --mid:      #c8d4e8;
+  --serif:    'Cormorant Garamond', Georgia, serif;
+  --sans:     'DM Sans', system-ui, sans-serif;
+  --r:        8px;
+  --shadow:   0 4px 24px rgba(12,26,53,0.10);
+  --shadow2:  0 12px 48px rgba(12,26,53,0.16);
+}
+
+html { scroll-behavior: smooth; }
+body { font-family: var(--sans); background: var(--offwhite); color: var(--navy); overflow-x: hidden; font-size: 16px; line-height: 1.65; }
+img  { display: block; max-width: 100%; }
+a    { color: inherit; }
+
+/* ═══════════════════════════════════════════════════
+   UTILITIES
+═══════════════════════════════════════════════════ */
+.container { max-width: 1180px; margin: 0 auto; padding: 0 2rem; }
+.section-eyebrow {
+  display: inline-flex; align-items: center; gap: 0.6rem;
+  font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--teal); margin-bottom: 1rem;
+}
+.section-eyebrow::before { content: ''; display: block; width: 20px; height: 1px; background: currentColor; }
+.section-title {
+  font-family: var(--serif); font-size: clamp(2rem, 3.5vw, 2.9rem);
+  font-weight: 400; line-height: 1.12; color: var(--navy); margin-bottom: 1.1rem;
+}
+.section-title em { font-style: italic; color: var(--teal); }
+.section-sub { font-size: 0.975rem; color: var(--slate); max-width: 540px; line-height: 1.8; font-weight: 300; }
+.on-dark { color: var(--white) !important; }
+.on-dark em { color: var(--gold2) !important; }
+.on-dark .section-eyebrow { color: var(--gold2); }
+.on-dark .section-eyebrow::before { background: var(--gold2); }
+.on-dark .section-sub { color: rgba(255,255,255,0.5); }
+
+/* ═══════════════════════════════════════════════════
+   SCROLL REVEAL
+═══════════════════════════════════════════════════ */
+.reveal { opacity: 0; transform: translateY(26px); transition: opacity 0.75s ease, transform 0.75s ease; }
+.reveal.visible { opacity: 1; transform: none; }
+.d1 { transition-delay: 0.08s; } .d2 { transition-delay: 0.16s; } .d3 { transition-delay: 0.24s; } .d4 { transition-delay: 0.32s; }
+
+/* ═══════════════════════════════════════════════════
+   NAV
+═══════════════════════════════════════════════════ */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+  padding: 1rem 0; transition: background 0.35s, box-shadow 0.35s, padding 0.35s;
+}
+nav.scrolled {
+  background: rgba(12,26,53,0.96); backdrop-filter: blur(16px);
+  box-shadow: 0 1px 32px rgba(0,0,0,0.22); padding: 0.7rem 0;
+}
+.nav-inner { display: flex; align-items: center; justify-content: space-between; }
+.nav-logo {
+  font-family: var(--serif); font-size: 1.6rem; font-weight: 600;
+  color: var(--white); text-decoration: none; letter-spacing: 0.02em;
+}
+.nav-logo span { color: var(--gold); }
+.nav-links { display: flex; gap: 2rem; list-style: none; align-items: center; }
+.nav-links a {
+  color: rgba(255,255,255,0.72); text-decoration: none; font-size: 0.82rem;
+  font-weight: 400; letter-spacing: 0.05em; text-transform: uppercase;
+  transition: color 0.2s; position: relative; padding-bottom: 2px;
+}
+.nav-links a::after {
+  content: ''; position: absolute; bottom: 0; left: 0; right: 100%; height: 1px;
+  background: var(--gold); transition: right 0.25s;
+}
+.nav-links a:hover { color: var(--white); }
+.nav-links a:hover::after { right: 0; }
+.nav-cta {
+  background: var(--gold) !important; color: var(--navy) !important;
+  padding: 0.48rem 1.1rem !important; border-radius: var(--r) !important;
+  font-weight: 500 !important; letter-spacing: 0.04em !important;
+  transition: background 0.2s !important;
+}
+.nav-cta::after { display: none !important; }
+.nav-cta:hover { background: var(--gold2) !important; }
+
+/* ═══════════════════════════════════════════════════
+   HERO
+═══════════════════════════════════════════════════ */
+#hero {
+  min-height: 100vh; background: var(--navy); position: relative;
+  display: flex; align-items: center; overflow: hidden;
+}
+.hero-grid-bg {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(201,168,76,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(201,168,76,0.04) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 40%, transparent 100%);
+}
+.hero-glow {
+  position: absolute; top: -20%; right: -15%; width: 680px; height: 680px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(13,148,136,0.12) 0%, rgba(201,168,76,0.06) 40%, transparent 70%);
+}
+.hero-glow2 {
+  position: absolute; bottom: -20%; left: -10%; width: 480px; height: 480px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(201,168,76,0.08) 0%, transparent 60%);
+}
+.hero-content { position: relative; z-index: 2; padding: 9rem 0 5rem; width: 100%; }
+
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 0.8rem;
+  font-size: 0.76rem; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 2rem;
+  opacity: 0; animation: fadeUp 0.9s 0.2s forwards;
+}
+.hero-eyebrow::before, .hero-eyebrow::after {
+  content: ''; display: block; width: 30px; height: 1px; background: var(--gold); opacity: 0.5;
+}
+
+.hero-title {
+  font-family: var(--serif); font-size: clamp(3.2rem, 6.5vw, 5.6rem);
+  font-weight: 300; line-height: 1.05; color: var(--white);
+  max-width: 860px; margin-bottom: 1.6rem;
+  opacity: 0; animation: fadeUp 0.95s 0.35s forwards;
+}
+.hero-title em { font-style: italic; color: var(--gold2); display: block; }
+.hero-title strong { font-weight: 600; }
+
+.hero-sub {
+  font-size: 1.05rem; color: rgba(255,255,255,0.58); max-width: 600px;
+  line-height: 1.78; font-weight: 300; margin-bottom: 0.6rem;
+  opacity: 0; animation: fadeUp 0.95s 0.5s forwards;
+}
+.hero-icp {
+  font-size: 0.82rem; color: var(--gold); font-style: italic; margin-bottom: 2.5rem; display: block;
+  opacity: 0; animation: fadeUp 0.95s 0.62s forwards;
+}
+.hero-actions {
+  display: flex; gap: 1rem; flex-wrap: wrap;
+  opacity: 0; animation: fadeUp 0.95s 0.74s forwards;
+}
+.btn-primary {
+  background: var(--gold); color: var(--navy); padding: 0.9rem 2.1rem;
+  border-radius: var(--r); font-weight: 500; font-size: 0.9rem; text-decoration: none;
+  letter-spacing: 0.03em; transition: background 0.2s, transform 0.15s; display: inline-block;
+}
+.btn-primary:hover { background: var(--gold2); transform: translateY(-2px); }
+.btn-outline {
+  border: 1px solid rgba(255,255,255,0.28); color: rgba(255,255,255,0.82);
+  padding: 0.9rem 2.1rem; border-radius: var(--r); font-size: 0.9rem; text-decoration: none;
+  letter-spacing: 0.03em; transition: border-color 0.2s, color 0.2s, transform 0.15s; display: inline-block;
+}
+.btn-outline:hover { border-color: var(--gold); color: var(--gold); transform: translateY(-2px); }
+
+.hero-pillars {
+  display: flex; gap: 0.7rem; margin-top: 3.5rem; flex-wrap: wrap;
+  opacity: 0; animation: fadeUp 0.95s 0.86s forwards;
+}
+.ptag {
+  font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase;
+  padding: 0.32rem 0.85rem; border-radius: 20px; border: 1px solid;
+}
+.ptag-s { color: #5eead4; border-color: rgba(94,234,212,0.3); }
+.ptag-e { color: #93c5fd; border-color: rgba(147,197,253,0.3); }
+.ptag-a { color: var(--gold2); border-color: rgba(232,201,109,0.3); }
+.ptag-u { color: #86efac; border-color: rgba(134,239,172,0.3); }
+
+.hero-stats {
+  display: grid; grid-template-columns: repeat(3,1fr); gap: 0;
+  border-top: 1px solid rgba(255,255,255,0.07); margin-top: 4.5rem;
+  opacity: 0; animation: fadeUp 0.95s 1.0s forwards;
+}
+.stat-i { padding: 2rem 1.5rem; border-right: 1px solid rgba(255,255,255,0.07); }
+.stat-i:last-child { border-right: none; }
+.stat-n {
+  font-family: var(--serif); font-size: 2.7rem; font-weight: 600;
+  color: var(--gold); line-height: 1; margin-bottom: 0.4rem;
+}
+.stat-l { font-size: 0.8rem; color: rgba(255,255,255,0.45); line-height: 1.5; }
+.stat-src { font-size: 0.68rem; color: rgba(255,255,255,0.25); font-style: italic; margin-top: 0.25rem; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(22px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ═══════════════════════════════════════════════════
+   URGENCY BANNER — regulatory deadlines
+═══════════════════════════════════════════════════ */
+.urgency-strip {
+  background: linear-gradient(90deg, var(--navy2), var(--navy3));
+  border-top: 1px solid rgba(255,255,255,0.06);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  padding: 1rem 0;
+}
+.urgency-inner { display: flex; justify-content: center; align-items: center; gap: 3rem; flex-wrap: wrap; }
+.urgency-item { display: flex; align-items: center; gap: 0.75rem; }
+.urgency-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.urgency-dot.red  { background: #ef4444; box-shadow: 0 0 8px rgba(239,68,68,0.5); animation: pulse 2s infinite; }
+.urgency-dot.amber{ background: var(--gold); box-shadow: 0 0 8px rgba(201,168,76,0.5); animation: pulse 2s 0.5s infinite; }
+.urgency-dot.teal { background: var(--teal); box-shadow: 0 0 8px rgba(13,148,136,0.5); animation: pulse 2s 1s infinite; }
+.urgency-label { font-size: 0.78rem; color: rgba(255,255,255,0.6); }
+.urgency-label strong { color: var(--white); }
+.urgency-divider { width: 1px; height: 28px; background: rgba(255,255,255,0.1); }
+@keyframes pulse {
+  0%,100% { opacity: 1; } 50% { opacity: 0.4; }
+}
+
+/* ═══════════════════════════════════════════════════
+   CREDENTIALS MARQUEE
+═══════════════════════════════════════════════════ */
+.marquee-strip {
+  background: var(--white); border-top: 1px solid var(--light); border-bottom: 1px solid var(--light);
+  padding: 1.1rem 0; overflow: hidden;
+}
+.marquee-track {
+  display: flex; gap: 3.5rem; align-items: center;
+  animation: marquee 28s linear infinite; width: max-content;
+}
+.marquee-track:hover { animation-play-state: paused; }
+.marquee-item {
+  font-size: 0.75rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--slate2); white-space: nowrap; display: flex; align-items: center; gap: 0.5rem;
+}
+.marquee-item::before { content: '◆'; font-size: 0.5rem; color: var(--gold); }
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* ═══════════════════════════════════════════════════
+   PROBLEM
+═══════════════════════════════════════════════════ */
+#problem { background: var(--navy); padding: 6rem 0; position: relative; overflow: hidden; }
+#problem::after {
+  content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+}
+
+.problem-hero-stat {
+  background: rgba(201,168,76,0.07); border: 1px solid rgba(201,168,76,0.15);
+  border-radius: var(--r); padding: 1.2rem 1.8rem;
+  display: flex; align-items: center; gap: 1.5rem; margin-bottom: 3rem;
+}
+.phs-num {
+  font-family: var(--serif); font-size: 3rem; font-weight: 700;
+  color: var(--gold); line-height: 1; flex-shrink: 0;
+}
+.phs-text { font-size: 0.9rem; color: rgba(255,255,255,0.65); line-height: 1.65; }
+.phs-text strong { color: var(--white); }
+
+.problem-grid {
+  display: grid; grid-template-columns: repeat(3,1fr); gap: 1px;
+  background: rgba(255,255,255,0.05); border-radius: var(--r); overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.05);
+}
+.prob-card { background: var(--navy); padding: 2rem 1.7rem; transition: background 0.25s; position: relative; }
+.prob-card:hover { background: var(--navy2); }
+.prob-bucket {
+  font-size: 0.66rem; letter-spacing: 0.14em; text-transform: uppercase;
+  padding: 0.22rem 0.65rem; border-radius: 20px; margin-bottom: 1.3rem; display: inline-block;
+}
+.b-sec { color: #fca5a5; background: rgba(220,38,38,0.1); }
+.b-gov { color: #93c5fd; background: rgba(59,130,246,0.1); }
+.b-saf { color: #c4b5fd; background: rgba(124,58,237,0.1); }
+.prob-card h3 { font-family: var(--serif); font-size: 1.2rem; font-weight: 500; color: var(--white); margin-bottom: 0.7rem; line-height: 1.3; }
+.prob-card p  { font-size: 0.855rem; color: rgba(255,255,255,0.46); line-height: 1.78; font-weight: 300; }
+.prob-emo { font-size: 1.5rem; margin-bottom: 1rem; }
+
+.cases-grid {
+  display: grid; grid-template-columns: repeat(4,1fr); gap: 1px;
+  background: rgba(255,255,255,0.05); border-radius: var(--r); overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.05); margin-top: 3.5rem;
+}
+.case-card { background: rgba(255,255,255,0.02); padding: 1.6rem 1.3rem; }
+.case-val { font-family: var(--serif); font-size: 2rem; font-weight: 600; color: var(--gold2); margin-bottom: 0.35rem; }
+.case-org { font-size: 0.8rem; font-weight: 500; color: var(--white); margin-bottom: 0.35rem; }
+.case-desc{ font-size: 0.77rem; color: rgba(255,255,255,0.42); line-height: 1.55; }
+.case-src { font-size: 0.67rem; color: rgba(255,255,255,0.22); font-style: italic; margin-top: 0.4rem; }
+
+/* ═══════════════════════════════════════════════════
+   SERVICES
+═══════════════════════════════════════════════════ */
+#services { padding: 6rem 0; background: var(--offwhite); }
+
+.services-header { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; margin-bottom: 3.5rem; align-items: start; }
+.compare-table { background: var(--white); border: 1px solid var(--light); border-radius: var(--r); overflow: hidden; box-shadow: var(--shadow); }
+.ct-row { display: grid; grid-template-columns: 1.6fr 1fr 1fr 1fr 1fr; gap: 0; }
+.ct-cell { padding: 0.7rem 0.9rem; font-size: 0.8rem; border-bottom: 1px solid var(--light); color: var(--slate); }
+.ct-cell:first-child { font-weight: 500; color: var(--navy); }
+.ct-head .ct-cell { background: var(--navy); color: var(--white); font-size: 0.72rem; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; }
+.ct-us .ct-cell { background: #f0fdf4; color: #15803d; font-weight: 500; }
+.ct-us .ct-cell:first-child { color: var(--teal2); }
+
+.svc-tags { display: flex; gap: 0.45rem; flex-wrap: wrap; margin-top: 1.5rem; }
+.svc-tag { font-size: 0.7rem; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.25rem 0.75rem; border-radius: 20px; border: 1px solid var(--teal); color: var(--teal); }
+
+.services-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+
+.svc-card {
+  background: var(--white); border-radius: var(--r); padding: 2rem;
+  border: 1px solid var(--light); box-shadow: var(--shadow);
+  transition: box-shadow 0.25s, transform 0.2s; position: relative; overflow: hidden;
+}
+.svc-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
+.svc-card.c1::before { background: var(--navy3); }
+.svc-card.c2::before { background: var(--teal); }
+.svc-card.c3::before { background: var(--gold); }
+.svc-card.c4::before { background: #7c3aed; }
+.svc-card:hover { box-shadow: var(--shadow2); transform: translateY(-3px); }
+
+.svc-card.primary {
+  grid-column: 1 / -1; display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; align-items: start;
+}
+.svc-num { font-family: var(--serif); font-size: 0.85rem; color: var(--mid); font-weight: 400; margin-bottom: 0.5rem; }
+.svc-badge {
+  font-size: 0.67rem; letter-spacing: 0.12em; text-transform: uppercase;
+  padding: 0.2rem 0.6rem; border-radius: 12px; margin-bottom: 1.1rem; display: inline-block;
+}
+.c1 .svc-badge { background: rgba(27,58,107,0.08); color: var(--navy3); }
+.c2 .svc-badge { background: rgba(13,148,136,0.08); color: var(--teal2); }
+.c3 .svc-badge { background: rgba(201,168,76,0.10); color: var(--gold); }
+.c4 .svc-badge { background: rgba(124,58,237,0.08); color: #7c3aed; }
+.svc-card h3 { font-family: var(--serif); font-size: 1.35rem; font-weight: 500; color: var(--navy); margin-bottom: 0.7rem; line-height: 1.3; }
+.svc-card p  { font-size: 0.875rem; color: var(--slate); line-height: 1.78; font-weight: 300; margin-bottom: 1.2rem; }
+.svc-meta { display: flex; gap: 0.55rem; flex-wrap: wrap; padding-top: 1rem; border-top: 1px solid var(--light); }
+.svc-price { font-size: 0.78rem; font-weight: 500; color: var(--navy); background: var(--light); padding: 0.18rem 0.65rem; border-radius: 12px; }
+.svc-time  { font-size: 0.78rem; color: var(--slate); background: var(--offwhite); padding: 0.18rem 0.65rem; border-radius: 12px; border: 1px solid var(--mid); }
+.svc-who { margin-top: 0.75rem; font-size: 0.78rem; color: var(--slate); }
+.svc-who strong { color: var(--navy); }
+.svc-features li {
+  font-size: 0.855rem; color: var(--slate); padding: 0.38rem 0;
+  border-bottom: 1px solid var(--light); list-style: none;
+  display: flex; align-items: flex-start; gap: 0.5rem;
+}
+.svc-features li::before { content: '→'; color: var(--navy3); flex-shrink: 0; }
+
+/* ═══════════════════════════════════════════════════
+   METHODOLOGY
+═══════════════════════════════════════════════════ */
+#methodology { background: var(--navy); padding: 6rem 0; }
+
+.meth-layout { display: grid; grid-template-columns: 1fr 1.6fr; gap: 5rem; align-items: start; margin-bottom: 4rem; }
+.fw-list { display: flex; flex-direction: column; gap: 0.65rem; margin-top: 2rem; }
+.fw-item {
+  display: flex; align-items: center; gap: 1rem; padding: 0.85rem 1.1rem;
+  background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06);
+  border-radius: var(--r); transition: background 0.2s;
+}
+.fw-item:hover { background: rgba(255,255,255,0.07); }
+.fw-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.fw-name { font-size: 0.85rem; font-weight: 500; color: var(--white); flex: 1; }
+.fw-tag  { font-size: 0.68rem; color: var(--gold2); letter-spacing: 0.06em; }
+
+.layer-viz { position: relative; }
+.lv-security {
+  background: rgba(124,58,237,0.08); border: 1px solid rgba(124,58,237,0.18);
+  border-radius: var(--r); padding: 1.5rem; margin-bottom: 0;
+}
+.lv-gov {
+  background: rgba(13,148,136,0.08); border: 1px solid rgba(13,148,136,0.18);
+  border-radius: var(--r); padding: 1.3rem; margin: 1rem;
+}
+.lv-ai {
+  background: var(--navy3); border: 1px solid rgba(201,168,76,0.2);
+  border-radius: var(--r); padding: 0.9rem; margin: 1rem; text-align: center;
+}
+.lv-label { font-size: 0.68rem; letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 0.75rem; }
+.lv-security .lv-label { color: #c4b5fd; }
+.lv-gov .lv-label { color: #5eead4; }
+.lv-ai .lv-label { color: var(--gold2); font-size: 0.85rem; }
+.lv-chips { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+.lv-chip { font-size: 0.71rem; padding: 0.18rem 0.55rem; border-radius: 12px; background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.55); }
+
+.lv-insight {
+  margin-top: 1.5rem; padding: 1.2rem 1.5rem;
+  background: rgba(201,168,76,0.06); border: 1px solid rgba(201,168,76,0.12);
+  border-radius: var(--r);
+}
+.lv-insight p { font-size: 0.84rem; color: rgba(255,255,255,0.55); line-height: 1.7; font-style: italic; }
+.lv-insight p strong { color: var(--gold2); font-style: normal; }
+
+.lifecycle {
+  display: grid; grid-template-columns: repeat(5,1fr); gap: 1px;
+  background: rgba(255,255,255,0.05); border-radius: var(--r); overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.05);
+}
+.phase { padding: 1.7rem 1.1rem; background: rgba(255,255,255,0.02); transition: background 0.2s; }
+.phase:hover { background: rgba(255,255,255,0.05); }
+.phase-n  { font-family: var(--serif); font-size: 2rem; font-weight: 600; line-height: 1; margin-bottom: 0.35rem; }
+.phase-nm { font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255,255,255,0.38); margin-bottom: 0.9rem; }
+.phase-items { list-style: none; display: flex; flex-direction: column; gap: 0.45rem; }
+.phase-items li { font-size: 0.77rem; color: rgba(255,255,255,0.45); padding-left: 0.75rem; position: relative; line-height: 1.4; }
+.phase-items li::before { content: ''; position: absolute; left: 0; top: 0.5em; width: 3px; height: 3px; border-radius: 50%; }
+.phase-out { margin-top: 0.9rem; padding-top: 0.7rem; border-top: 1px solid rgba(255,255,255,0.06); font-size: 0.72rem; font-weight: 500; }
+
+/* ═══════════════════════════════════════════════════
+   TEAM — the headline new section
+═══════════════════════════════════════════════════ */
+#team { background: var(--offwhite); padding: 6rem 0; }
+
+.team-header { text-align: center; margin-bottom: 4rem; }
+.team-header .section-sub { margin: 0 auto; text-align: center; max-width: 620px; }
+
+/* Partnership bar */
+.partnership-bar {
+  display: grid; grid-template-columns: 1fr auto 1fr; gap: 2rem;
+  align-items: center; margin-bottom: 4rem;
+  background: var(--white); border: 1px solid var(--light);
+  border-radius: var(--r); padding: 1.5rem 2rem; box-shadow: var(--shadow);
+}
+.pb-pillar { text-align: center; }
+.pb-pillar-title { font-family: var(--serif); font-size: 1.1rem; font-weight: 600; color: var(--navy); margin-bottom: 0.5rem; }
+.pb-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; justify-content: center; }
+.pb-tag { font-size: 0.7rem; padding: 0.2rem 0.6rem; border-radius: 12px; border: 1px solid; }
+.pb-tag.navy { color: var(--navy3); border-color: rgba(27,58,107,0.3); background: rgba(27,58,107,0.05); }
+.pb-tag.teal { color: var(--teal2); border-color: rgba(13,148,136,0.3); background: rgba(13,148,136,0.05); }
+.pb-plus {
+  width: 48px; height: 48px; border-radius: 50%; background: var(--navy); color: var(--gold);
+  display: flex; align-items: center; justify-content: center; font-size: 1.5rem;
+  font-weight: 300; flex-shrink: 0; box-shadow: var(--shadow);
+}
+.pb-caption { text-align: center; font-size: 0.78rem; color: var(--slate); font-style: italic; margin-top: 0.4rem; }
+
+/* founder cards */
+.founders-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+
+.founder-card {
+  background: var(--white); border: 1px solid var(--light); border-radius: var(--r);
+  box-shadow: var(--shadow); overflow: hidden; transition: box-shadow 0.3s, transform 0.25s;
+}
+.founder-card:hover { box-shadow: var(--shadow2); transform: translateY(-3px); }
+
+.fc-header {
+  padding: 2rem 2rem 1.5rem; border-bottom: 1px solid var(--light); position: relative;
+}
+.fc-header::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+}
+.fc-h1 .fc-header::before { background: linear-gradient(90deg, var(--navy3), var(--teal)); }
+.fc-h2 .fc-header::before { background: linear-gradient(90deg, var(--teal), #7c3aed); }
+
+.fc-avatar {
+  width: 64px; height: 64px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--serif); font-size: 1.6rem; font-weight: 600;
+  color: var(--white); margin-bottom: 1.2rem; flex-shrink: 0;
+}
+.fc-h1 .fc-avatar { background: var(--navy3); }
+.fc-h2 .fc-avatar { background: var(--teal2); }
+
+.fc-name { font-family: var(--serif); font-size: 1.5rem; font-weight: 600; color: var(--navy); margin-bottom: 0.2rem; }
+.fc-role { font-size: 0.82rem; color: var(--teal); font-weight: 500; margin-bottom: 0.5rem; }
+.fc-tagline { font-size: 0.85rem; color: var(--slate); line-height: 1.6; font-style: italic; }
+
+.fc-quote {
+  padding: 1.4rem 2rem; background: var(--offwhite);
+  border-bottom: 1px solid var(--light); font-family: var(--serif);
+  font-size: 1.0rem; font-style: italic; font-weight: 300; color: var(--navy);
+  line-height: 1.65; border-left: none; position: relative;
+}
+.fc-quote::before {
+  content: '"'; font-size: 3rem; line-height: 0; position: absolute;
+  top: 1.8rem; left: 1.8rem; color: var(--gold); opacity: 0.3;
+  font-family: var(--serif);
+}
+
+.fc-body { padding: 1.5rem 2rem; }
+
+.fc-highlights { display: flex; flex-direction: column; gap: 0; margin-bottom: 1.5rem; }
+.fc-highlight {
+  display: flex; align-items: flex-start; gap: 0.9rem;
+  padding: 0.8rem 0; border-bottom: 1px solid var(--light);
+}
+.fc-highlight:last-child { border-bottom: none; }
+.fc-hi-icon {
+  width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center;
+  justify-content: center; font-size: 0.9rem; flex-shrink: 0; margin-top: 0.1rem;
+}
+.fc-h1 .fc-hi-icon { background: rgba(27,58,107,0.08); }
+.fc-h2 .fc-hi-icon { background: rgba(13,148,136,0.08); }
+.fc-hi-text strong { font-size: 0.84rem; font-weight: 500; color: var(--navy); display: block; margin-bottom: 0.15rem; }
+.fc-hi-text span   { font-size: 0.8rem; color: var(--slate); line-height: 1.55; }
+
+.fc-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 1px; background: var(--light); border-radius: 6px; overflow: hidden; margin-bottom: 1.5rem; }
+.fc-stat { background: var(--white); padding: 0.9rem 0.7rem; text-align: center; }
+.fc-stat-val { font-family: var(--serif); font-size: 1.45rem; font-weight: 600; margin-bottom: 0.2rem; }
+.fc-h1 .fc-stat-val { color: var(--navy3); }
+.fc-h2 .fc-stat-val { color: var(--teal); }
+.fc-stat-label { font-size: 0.72rem; color: var(--slate); line-height: 1.4; }
+
+.fc-certs { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.fc-cert {
+  font-size: 0.7rem; padding: 0.22rem 0.6rem; border-radius: 12px;
+  background: var(--navy); color: rgba(255,255,255,0.7); letter-spacing: 0.04em;
+}
+.fc-h2 .fc-cert { background: var(--teal2); }
+
+.fc-roles { display: flex; flex-direction: column; gap: 0; }
+.fc-role-item { padding: 0.65rem 0; border-bottom: 1px solid var(--light); }
+.fc-role-item:last-child { border-bottom: none; }
+.fc-role-title { font-size: 0.85rem; font-weight: 500; color: var(--navy); }
+.fc-role-org   { font-size: 0.78rem; color: var(--slate); }
+
+/* ═══════════════════════════════════════════════════
+   WHY PRAJNAGOV
+═══════════════════════════════════════════════════ */
+#why { background: var(--navy); padding: 6rem 0; position: relative; overflow: hidden; }
+#why::before {
+  content: ''; position: absolute; top: -40%; right: -20%; width: 600px; height: 600px;
+  border-radius: 50%; background: radial-gradient(circle, rgba(201,168,76,0.06) 0%, transparent 60%);
+}
+.why-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; margin-top: 3rem; }
+.why-card {
+  padding: 1.8rem; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06);
+  border-radius: var(--r); transition: background 0.25s, transform 0.2s;
+}
+.why-card:hover { background: rgba(255,255,255,0.07); transform: translateY(-2px); }
+.why-icon { font-size: 1.7rem; margin-bottom: 0.9rem; }
+.why-card h3 { font-family: var(--serif); font-size: 1.1rem; font-weight: 500; color: var(--white); margin-bottom: 0.55rem; }
+.why-card p  { font-size: 0.845rem; color: rgba(255,255,255,0.46); line-height: 1.75; font-weight: 300; }
+
+/* ═══════════════════════════════════════════════════
+   CONTACT
+═══════════════════════════════════════════════════ */
+#contact { padding: 6rem 0; background: var(--offwhite); }
+.contact-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: start; }
+
+.contact-info p { font-size: 0.94rem; color: var(--slate); line-height: 1.78; font-weight: 300; margin-bottom: 1.3rem; }
+.contact-details { display: flex; flex-direction: column; gap: 0.9rem; margin: 2rem 0; }
+.ci { display: flex; align-items: center; gap: 1rem; }
+.ci-icon { width: 38px; height: 38px; border-radius: 50%; background: var(--navy); display: flex; align-items: center; justify-content: center; font-size: 0.95rem; flex-shrink: 0; }
+.ci-text a { color: var(--navy); text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: color 0.2s; }
+.ci-text a:hover { color: var(--teal); }
+.ci-text span { display: block; font-size: 0.74rem; color: var(--slate); margin-top: 0.12rem; }
+
+.first-offer {
+  padding: 1.4rem 1.6rem; background: var(--white); border: 1px solid var(--light);
+  border-radius: var(--r); border-left: 3px solid var(--gold); margin-top: 2rem;
+  box-shadow: var(--shadow);
+}
+.fo-title { font-family: var(--serif); font-size: 1.1rem; font-weight: 500; color: var(--navy); margin-bottom: 0.5rem; }
+.fo-body  { font-size: 0.84rem; color: var(--slate); line-height: 1.7; }
+.fo-body strong { color: var(--navy); }
+
+.contact-form {
+  background: var(--white); border: 1px solid var(--light); border-radius: var(--r);
+  padding: 2.5rem; box-shadow: var(--shadow2);
+}
+.cf-title { font-family: var(--serif); font-size: 1.4rem; font-weight: 500; color: var(--navy); margin-bottom: 1.5rem; }
+.fg { margin-bottom: 1.1rem; }
+.fg label { display: block; font-size: 0.76rem; font-weight: 500; color: var(--navy); letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 0.45rem; }
+.fg input, .fg select, .fg textarea {
+  width: 100%; padding: 0.72rem 0.9rem; border: 1px solid var(--light); border-radius: var(--r);
+  font-family: var(--sans); font-size: 0.9rem; color: var(--navy); background: var(--offwhite);
+  transition: border-color 0.2s, box-shadow 0.2s; outline: none; appearance: none;
+}
+.fg input:focus, .fg select:focus, .fg textarea:focus {
+  border-color: var(--teal); box-shadow: 0 0 0 3px rgba(13,148,136,0.1);
+}
+.fg textarea { resize: vertical; min-height: 100px; }
+.fg-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.cf-submit {
+  width: 100%; padding: 0.9rem; background: var(--navy); color: var(--white);
+  border: none; border-radius: var(--r); font-family: var(--sans); font-size: 0.9rem;
+  font-weight: 500; letter-spacing: 0.04em; cursor: pointer; transition: background 0.2s;
+}
+.cf-submit:hover { background: var(--navy2); }
+
+/* ═══════════════════════════════════════════════════
+   FOOTER
+═══════════════════════════════════════════════════ */
+footer { background: var(--navy); padding: 3rem 0; border-top: 1px solid rgba(255,255,255,0.05); }
+.footer-inner { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem; }
+.footer-logo { font-family: var(--serif); font-size: 1.3rem; font-weight: 600; color: var(--white); }
+.footer-logo span { color: var(--gold); }
+.footer-sub { font-size: 0.76rem; color: rgba(255,255,255,0.3); font-style: italic; margin-top: 0.2rem; }
+.footer-links { display: flex; gap: 1.8rem; list-style: none; }
+.footer-links a { font-size: 0.76rem; color: rgba(255,255,255,0.35); text-decoration: none; letter-spacing: 0.06em; text-transform: uppercase; transition: color 0.2s; }
+.footer-links a:hover { color: var(--gold2); }
+.footer-copy { font-size: 0.73rem; color: rgba(255,255,255,0.25); text-align: right; }
+
+/* ═══════════════════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════════════════ */
+@media (max-width: 960px) {
+  .problem-grid { grid-template-columns: 1fr 1fr; }
+  .cases-grid   { grid-template-columns: 1fr 1fr; }
+  .services-header { grid-template-columns: 1fr; gap: 2rem; }
+  .services-grid { grid-template-columns: 1fr; }
+  .svc-card.primary { grid-template-columns: 1fr; }
+  .meth-layout  { grid-template-columns: 1fr; gap: 2.5rem; }
+  .lifecycle    { grid-template-columns: 1fr 1fr; }
+  .founders-grid { grid-template-columns: 1fr; }
+  .partnership-bar { grid-template-columns: 1fr; gap: 1.5rem; }
+  .pb-plus { margin: 0 auto; }
+  .why-grid     { grid-template-columns: 1fr 1fr; }
+  .contact-layout { grid-template-columns: 1fr; gap: 3rem; }
+  .hero-stats   { grid-template-columns: 1fr; }
+  .stat-i { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.07); }
+  .urgency-inner { gap: 1.5rem; }
+  .urgency-divider { display: none; }
+  .nav-links { display: none; }
+}
+@media (max-width: 600px) {
+  .problem-grid { grid-template-columns: 1fr; }
+  .lifecycle    { grid-template-columns: 1fr; }
+  .why-grid     { grid-template-columns: 1fr; }
+  .fc-stats     { grid-template-columns: 1fr 1fr; }
+  .fg-row       { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="nav">
+  <div class="container nav-inner">
+    <a href="#hero" class="nav-logo">Prajna<span>Gov</span></a>
+    <ul class="nav-links">
+      <li><a href="#problem">The Problem</a></li>
+      <li><a href="#services">Services</a></li>
+      <li><a href="#methodology">Methodology</a></li>
+      <li><a href="#team">Team</a></li>
+      <li><a href="#contact" class="nav-cta">Get in Touch</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-grid-bg"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-glow2"></div>
+  <div class="container hero-content">
+    <div class="hero-eyebrow">AI Safety · Security · Governance</div>
+    <h1 class="hero-title">
+      <em>Prajna</em> — Ancient Wisdom.<br>
+      <strong>Modern AI Governance.</strong>
+    </h1>
+    <p class="hero-sub">AI Safety, Security & Governance as a Service for regulated SMEs and mid-market firms deploying GenAI in India and ASEAN. Governance-first. Security-embedded. Implementation-led.</p>
+    <span class="hero-icp">Primary buyer: Chief Risk Officer / Head of Compliance</span>
+    <div class="hero-actions">
+      <a href="#contact" class="btn-primary">Request an Assessment</a>
+      <a href="#services" class="btn-outline">Explore Services</a>
+    </div>
+    <div class="hero-pillars">
+      <span class="ptag ptag-s">Safety</span>
+      <span class="ptag ptag-e">Ethics</span>
+      <span class="ptag ptag-a">Accountability</span>
+      <span class="ptag ptag-u">Sustainability</span>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-i">
+        <div class="stat-n">63%</div>
+        <div class="stat-l">of organisations operate without any AI governance policy — no benchmarks, no accountability</div>
+        <div class="stat-src">IBM Cost of a Data Breach, 2025</div>
+      </div>
+      <div class="stat-i">
+        <div class="stat-n">$1.9M</div>
+        <div class="stat-l">average savings per breach for organisations with extensive AI governance vs. those without</div>
+        <div class="stat-src">IBM Cost of a Data Breach, 2025</div>
+      </div>
+      <div class="stat-i">
+        <div class="stat-n">5 min</div>
+        <div class="stat-l">to generate an AI-powered phishing attack that once took 16 hours — threat is machine-speed now</div>
+        <div class="stat-src">IBM X-Force Threat Intelligence Index, 2025</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- URGENCY STRIP -->
+<div class="urgency-strip">
+  <div class="container urgency-inner">
+    <div class="urgency-item">
+      <div class="urgency-dot red"></div>
+      <div class="urgency-label"><strong>India AI Guidelines</strong> — Third-party audit mandate now active · Nov 2025</div>
+    </div>
+    <div class="urgency-divider"></div>
+    <div class="urgency-item">
+      <div class="urgency-dot amber"></div>
+      <div class="urgency-label"><strong>EU AI Act</strong> — Full applicability · Aug 2026 · Fines up to €35M or 7% of global revenue</div>
+    </div>
+    <div class="urgency-divider"></div>
+    <div class="urgency-item">
+      <div class="urgency-dot teal"></div>
+      <div class="urgency-label"><strong>Indonesia OJK</strong> — Banking AI mandate active · Apr 2025 · Most enforceable in SEA</div>
+    </div>
+  </div>
+</div>
+
+<!-- CREDENTIALS MARQUEE -->
+<div class="marquee-strip">
+  <div class="marquee-track">
+    <span class="marquee-item">MAS Veritas Contributor</span>
+    <span class="marquee-item">FEAT Ethics Framework Co-Author</span>
+    <span class="marquee-item">Cyber Security Hub — Published Expert</span>
+    <span class="marquee-item">InsuranceAsia News Conference Speaker</span>
+    <span class="marquee-item">MITRE ATT&CK Practitioner</span>
+    <span class="marquee-item">Standard Chartered</span>
+    <span class="marquee-item">Nomura Singapore</span>
+    <span class="marquee-item">Accenture</span>
+    <span class="marquee-item">UOB</span>
+    <span class="marquee-item">Citibank</span>
+    <span class="marquee-item">GoJek</span>
+    <span class="marquee-item">SuperAI 2024 Panellist</span>
+    <span class="marquee-item">NTU AI Ethics & Governance</span>
+    <span class="marquee-item">CISM (ISACA)</span>
+    <span class="marquee-item">FSISAC Member</span>
+    <span class="marquee-item">Post-Quantum Cryptography Forum</span>
+    <span class="marquee-item">ISO/IEC 42001</span>
+    <span class="marquee-item">NIST AI RMF · NIST CSF</span>
+    <span class="marquee-item">EU AI Act Advisory</span>
+    <span class="marquee-item">Harvard Business School (HBX CORe)</span>
+    <span class="marquee-item">Indian Statistical Institute</span>
+    <span class="marquee-item">Agentic AI Certified Facilitator — Accenture</span>
+    <!-- duplicate for seamless loop -->
+    <span class="marquee-item">MAS Veritas Contributor</span>
+    <span class="marquee-item">FEAT Ethics Framework Co-Author</span>
+    <span class="marquee-item">Cyber Security Hub — Published Expert</span>
+    <span class="marquee-item">InsuranceAsia News Conference Speaker</span>
+    <span class="marquee-item">MITRE ATT&CK Practitioner</span>
+    <span class="marquee-item">Standard Chartered</span>
+    <span class="marquee-item">Nomura Singapore</span>
+    <span class="marquee-item">Accenture</span>
+    <span class="marquee-item">UOB</span>
+    <span class="marquee-item">Citibank</span>
+    <span class="marquee-item">GoJek</span>
+    <span class="marquee-item">SuperAI 2024 Panellist</span>
+    <span class="marquee-item">NTU AI Ethics & Governance</span>
+    <span class="marquee-item">CISM (ISACA)</span>
+    <span class="marquee-item">FSISAC Member</span>
+    <span class="marquee-item">Post-Quantum Cryptography Forum</span>
+    <span class="marquee-item">ISO/IEC 42001</span>
+    <span class="marquee-item">NIST AI RMF · NIST CSF</span>
+    <span class="marquee-item">EU AI Act Advisory</span>
+    <span class="marquee-item">Harvard Business School (HBX CORe)</span>
+    <span class="marquee-item">Indian Statistical Institute</span>
+    <span class="marquee-item">Agentic AI Certified Facilitator — Accenture</span>
+  </div>
+</div>
+
+<!-- PROBLEM -->
+<section id="problem">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-eyebrow on-dark">The Problem</div>
+      <h2 class="section-title on-dark">AI adoption is racing ahead of<br><em>safety, security & governance</em></h2>
+      <p class="section-sub on-dark">This becomes urgent the moment GenAI enters customer support, hiring, lending, or procurement — when liability attaches to AI outputs.</p>
+    </div>
+
+    <div class="problem-hero-stat reveal d1">
+      <div class="phs-num">63%</div>
+      <div class="phs-text"><strong>of organisations have no AI governance policy</strong> — operating without benchmarks, accountability, or any mechanism to detect when AI goes wrong. 74% have only moderate or limited AI risk framework coverage. The governance gap is real, measurable, and growing. <em style="color:var(--gold2);font-style:normal">IBM Cost of a Data Breach 2025 · IBM AI at the Core 2025</em></div>
+    </div>
+
+    <div class="problem-grid reveal d1">
+      <div class="prob-card"><div class="prob-bucket b-sec">Security Risk</div><div class="prob-emo">🔒</div><h3>Expanding AI Threat Surface</h3><p>Prompt injection, shadow AI, deepfakes, and model theft at machine speed — attack vectors legacy cybersecurity frameworks were never designed for. 20% of organisations discover unauthorised AI they didn't know existed.</p></div>
+      <div class="prob-card"><div class="prob-bucket b-sec">Security Risk</div><div class="prob-emo">⚡</div><h3>AI vs AI — The New Threat Reality</h3><p>A phishing attack that once took 16 hours to craft takes 5 minutes with AI. Attackers are already weaponising AI. Defenders without governance and observability have no defence.</p></div>
+      <div class="prob-card"><div class="prob-bucket b-gov">Governance Gap</div><div class="prob-emo">🧠</div><h3>Black-Box Decisions</h3><p>Unexplainable AI in credit, hiring, and healthcare — regulators in India (RBI AI committee), Philippines (NPC), and the EU are now enforcing accountability with real financial penalties.</p></div>
+      <div class="prob-card"><div class="prob-bucket b-gov">Governance Gap</div><div class="prob-emo">👁</div><h3>No AI Observability</h3><p>Models deployed without monitoring. Hallucinations, drift, and data leakage go undetected until a regulator, client audit, or lawsuit forces the conversation.</p></div>
+      <div class="prob-card"><div class="prob-bucket b-saf">Safety & Compliance</div><div class="prob-emo">🌊</div><h3>Regulatory Tsunami</h3><p>EU AI Act (Aug 2026) · India AI Guidelines (Nov 2025) · Indonesia OJK mandate (Apr 2025) · Philippines NAIS-PH (May 2025). Procurement chains are propagating requirements to suppliers and partners.</p></div>
+      <div class="prob-card"><div class="prob-bucket b-saf">Safety & Compliance</div><div class="prob-emo">🕵️</div><h3>Shadow AI — The Hidden Risk</h3><p>Banning AI tools backfires — employees use them anyway, invisibly. The answer is proactive enablement with governance and an AI Acceptable Use Programme, not prohibition.</p></div>
+    </div>
+
+    <div class="cases-grid reveal d2">
+      <div class="case-card"><div class="case-val">$3.09B</div><div class="case-org">TD Bank, USA</div><div class="case-desc">Penalty for inadequate AI-assisted AML monitoring enabling criminal financial activity</div><div class="case-src">US DOJ / FinCEN, 2025</div></div>
+      <div class="case-card"><div class="case-val">$3.7B</div><div class="case-org">Dutch Tax Authority</div><div class="case-desc">Government compensation after AI wrongly flagged thousands of families for welfare fraud</div><div class="case-src">Dutch Parliamentary Records, 2021–2025</div></div>
+      <div class="case-card"><div class="case-val">€15M</div><div class="case-org">Italy (Garante)</div><div class="case-desc">Fine against an AI company for processing personal data without safeguards during model training</div><div class="case-src">Italian Garante Authority, 2024</div></div>
+      <div class="case-card"><div class="case-val">74%</div><div class="case-org">Governance Coverage Gap</div><div class="case-desc">of organisations have only moderate or limited AI risk framework coverage across their AI estate</div><div class="case-src">IBM AI at the Core, 2025</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services">
+  <div class="container">
+    <div class="services-header">
+      <div class="reveal">
+        <div class="section-eyebrow">Services</div>
+        <h2 class="section-title">One primary offer.<br><em>Three supporting services.</em></h2>
+        <p class="section-sub">Modular by design. Clients engage with a single assessment or build a full governance programme. All fees in USD.</p>
+        <div class="svc-tags">
+          <span class="svc-tag">Governance-first</span>
+          <span class="svc-tag">Security-embedded</span>
+          <span class="svc-tag">Implementation-led</span>
+          <span class="svc-tag">SME-designed</span>
+        </div>
+      </div>
+      <div class="reveal d1">
+        <div class="compare-table">
+          <div class="ct-row ct-head">
+            <div class="ct-cell">Provider</div>
+            <div class="ct-cell">Speed</div>
+            <div class="ct-cell">Cost</div>
+            <div class="ct-cell">AI Depth</div>
+            <div class="ct-cell">SME Fit</div>
+          </div>
+          <div class="ct-row"><div class="ct-cell">Big 4</div><div class="ct-cell">6–18 mo</div><div class="ct-cell">$300K+</div><div class="ct-cell">Policy only</div><div class="ct-cell">Poor</div></div>
+          <div class="ct-row"><div class="ct-cell">Local GRC</div><div class="ct-cell">4–8 wks</div><div class="ct-cell">$40–150K</div><div class="ct-cell">Limited</div><div class="ct-cell">Better</div></div>
+          <div class="ct-row ct-us"><div class="ct-cell">PrajnaGov</div><div class="ct-cell">4–8 wks</div><div class="ct-cell">$19–45K</div><div class="ct-cell">Threat-led</div><div class="ct-cell">Built for it</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="services-grid">
+      <!-- Primary -->
+      <div class="svc-card c1 primary reveal">
+        <div class="svc-body">
+          <div class="svc-num">01</div>
+          <div class="svc-badge">Core Offer · Entry Point</div>
+          <h3>AI Governance Readiness Assessment</h3>
+          <p>A structured, board-ready assessment covering your complete AI landscape — including third-party and supply chain AI. EU AI Act classification, maturity scorecard, full risk assessment, and prioritised remediation roadmap.</p>
+          <div class="svc-meta">
+            <span class="svc-price">$19K – $45K</span>
+            <span class="svc-time">4 – 8 weeks</span>
+            <span class="svc-time">Fixed fee</span>
+          </div>
+          <div class="svc-who"><strong>Who buys:</strong> CRO · Head of Compliance · Board Risk Committee</div>
+        </div>
+        <div>
+          <ul class="svc-features">
+            <li>AI System Register — every asset, named owner, risk tier</li>
+            <li>EU AI Act & NIST AI RMF risk classification</li>
+            <li>Full AI Risk Assessment — likelihood/impact matrix</li>
+            <li>3rd & 4th party supply chain AI mapping</li>
+            <li>AI Security Posture Management (AISPM) baseline scan</li>
+            <li>Maturity scorecard — Safety, Ethics, Accountability, Sustainability</li>
+            <li>Prioritised remediation roadmap with named owners</li>
+            <li>Board-ready presentation of findings</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Security -->
+      <div class="svc-card c2 reveal d1">
+        <div class="svc-num">02</div>
+        <div class="svc-badge">Key Differentiator</div>
+        <h3>Threat-Led AI Security Assessment</h3>
+        <p>Maps your full AI attack surface — prompt injection, shadow AI, deepfakes, model theft and inversion. AISPM posture scan and purple team testing. Delivers a full risk assessment, not just a control list.</p>
+        <div class="svc-meta">
+          <span class="svc-price">$25K – $58K</span>
+          <span class="svc-time">3 – 6 weeks</span>
+        </div>
+        <div class="svc-who"><strong>Who buys:</strong> CISO · Head of Cyber Risk · CTO</div>
+      </div>
+
+      <!-- Retainer -->
+      <div class="svc-card c3 reveal d2">
+        <div class="svc-num">03</div>
+        <div class="svc-badge">Recurring Revenue</div>
+        <h3>Ongoing Advisory Retainer</h3>
+        <p>Converts a one-time assessment into a long-term governance partnership. AI observability monitoring, AI Acceptable Use Programme, regulatory change management, and incident response support.</p>
+        <div class="svc-meta">
+          <span class="svc-price">$4K – $13K / month</span>
+          <span class="svc-time">Ongoing</span>
+        </div>
+        <div class="svc-who"><strong>Who buys:</strong> CRO · Chief Compliance Officer · Board Audit Committee</div>
+      </div>
+
+      <!-- Training -->
+      <div class="svc-card c4 reveal d3">
+        <div class="svc-num">04</div>
+        <div class="svc-badge">Upsell</div>
+        <h3>AI Governance Training & Certification</h3>
+        <p>ISO 42001-aligned governance training for boards, compliance teams, and technical staff. Proactive AI enablement — building safe AI habits, not banning tools.</p>
+        <div class="svc-meta">
+          <span class="svc-price">$2.5K – $6.5K / cohort</span>
+          <span class="svc-time">2 – 3 days</span>
+        </div>
+        <div class="svc-who"><strong>Who buys:</strong> L&D / HR · Risk Teams · AI Product Owners</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- METHODOLOGY -->
+<section id="methodology">
+  <div class="container">
+    <div class="meth-layout">
+      <div class="reveal">
+        <div class="section-eyebrow on-dark">Methodology</div>
+        <h2 class="section-title on-dark">Governance at the core.<br><em>Security as the shield.</em></h2>
+        <p class="section-sub on-dark">Clients don't need five frameworks. They need one operating model mapped to multiple standards. Based on IBM Distinguished Engineer Jeff Crume's integrated AI Risk Solution Framework.</p>
+        <div class="fw-list">
+          <div class="fw-item"><div class="fw-dot" style="background:#60a5fa"></div><span class="fw-name">Gartner AI TRiSM</span><span class="fw-tag">Technical Backbone</span></div>
+          <div class="fw-item"><div class="fw-dot" style="background:#5eead4"></div><span class="fw-name">NIST AI Risk Management Framework</span><span class="fw-tag">Global De Facto</span></div>
+          <div class="fw-item"><div class="fw-dot" style="background:#fca5a5"></div><span class="fw-name">EU AI Act</span><span class="fw-tag">Binding Aug 2026</span></div>
+          <div class="fw-item"><div class="fw-dot" style="background:#c4b5fd"></div><span class="fw-name">ISO/IEC 42001</span><span class="fw-tag">Certification Ready</span></div>
+          <div class="fw-item"><div class="fw-dot" style="background:var(--gold2)"></div><span class="fw-name">MAS Veritas & FEAT Ethics Principles</span><span class="fw-tag">APAC Benchmark</span></div>
+          <div class="fw-item"><div class="fw-dot" style="background:#86efac"></div><span class="fw-name">ASEAN AI Guide (2024)</span><span class="fw-tag">SEA Markets</span></div>
+        </div>
+      </div>
+      <div class="reveal d1">
+        <div class="layer-viz">
+          <div class="lv-security">
+            <div class="lv-label">Security Layer — outer shield</div>
+            <div class="lv-chips"><span class="lv-chip">Shadow AI discovery</span><span class="lv-chip">AISPM posture scan</span><span class="lv-chip">AI firewalls & guardrails</span><span class="lv-chip">Prompt injection testing</span><span class="lv-chip">Purple team testing</span><span class="lv-chip">Threat monitoring</span></div>
+            <div class="lv-gov">
+              <div class="lv-label">Governance Layer — inner core</div>
+              <div class="lv-chips"><span class="lv-chip">AI lifecycle governance</span><span class="lv-chip">Use case discovery</span><span class="lv-chip">Risk management</span><span class="lv-chip">Compliance monitoring</span><span class="lv-chip">Acceptable Use Policy</span><span class="lv-chip">Data lineage</span><span class="lv-chip">Model Risk Management (MRM)</span><span class="lv-chip">FEAT Ethics principles</span></div>
+              <div class="lv-ai"><div class="lv-label">The AI System</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="lv-insight">
+          <p><strong>"It's hard to know if you're succeeding if you've never defined the benchmarks."</strong> — Jeff Crume, IBM Distinguished Engineer. We establish governance benchmarks before any controls are deployed. MAS Veritas FEAT principles embedded across the full AI lifecycle.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="lifecycle reveal">
+      <div class="phase"><div class="phase-n" style="color:#60a5fa">01</div><div class="phase-nm">Discover</div><ul class="phase-items"><li style="">AI system inventory</li><li>Shadow AI identification</li><li>EU AI Act classification</li><li>3rd/4th party mapping</li></ul><div class="phase-out" style="color:#60a5fa">→ AI System Register</div></div>
+      <div class="phase"><div class="phase-n" style="color:#5eead4">02</div><div class="phase-nm">Assess</div><ul class="phase-items"><li>Maturity scoring</li><li>Threat surface mapping</li><li>Full risk assessment</li><li>MRM documentation</li></ul><div class="phase-out" style="color:#5eead4">→ AI Risk Assessment</div></div>
+      <div class="phase"><div class="phase-n" style="color:#c4b5fd">03</div><div class="phase-nm">Design</div><ul class="phase-items"><li>Governance policy suite</li><li>Roles & RACI</li><li>ISO 42001 blueprint</li><li>Acceptable Use Programme</li></ul><div class="phase-out" style="color:#c4b5fd">→ Policy Suite</div></div>
+      <div class="phase"><div class="phase-n" style="color:#5eead4">04</div><div class="phase-nm">Implement</div><ul class="phase-items"><li>Controls deployment</li><li>Training delivery</li><li>AI register activation</li><li>Guardrail services</li></ul><div class="phase-out" style="color:#5eead4">→ AI Register + Assurance</div></div>
+      <div class="phase"><div class="phase-n" style="color:var(--gold2)">05</div><div class="phase-nm">Monitor</div><ul class="phase-items"><li>AI observability dashboard</li><li>Drift & hallucination detection</li><li>Annual maturity review</li><li>Incident response</li></ul><div class="phase-out" style="color:var(--gold2)">→ Monthly Board Report</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- TEAM -->
+<section id="team">
+  <div class="container">
+    <div class="team-header reveal">
+      <div class="section-eyebrow" style="justify-content:center;">The Team</div>
+      <h2 class="section-title" style="text-align:center;">Two disciplines.<br><em>One integrated practice.</em></h2>
+      <p class="section-sub">AI governance requires both technical security depth and rigorous ethics & governance expertise. We bring both — from first-hand delivery at Tier-1 global financial institutions.</p>
+    </div>
+
+    <!-- Partnership bar -->
+    <div class="partnership-bar reveal d1">
+      <div class="pb-pillar">
+        <div class="pb-pillar-title">Security & Risk</div>
+        <div style="font-size:0.78rem;color:var(--slate);margin-bottom:0.8rem;">Sourabh Haldar</div>
+        <div class="pb-tags">
+          <span class="pb-tag navy">Threat Intelligence & MITRE ATT&CK</span>
+          <span class="pb-tag navy">Threat-Led Security</span>
+          <span class="pb-tag navy">Cyber Risk & Resilience</span>
+          <span class="pb-tag navy">Purple Team Testing</span>
+          <span class="pb-tag navy">AI & Payments Security</span>
+        </div>
+      </div>
+      <div>
+        <div class="pb-plus">+</div>
+        <div class="pb-caption">Complementary<br>partnership</div>
+      </div>
+      <div class="pb-pillar">
+        <div class="pb-pillar-title">Governance, Ethics & AI</div>
+        <div style="font-size:0.78rem;color:var(--slate);margin-bottom:0.8rem;">Murari Mohan</div>
+        <div class="pb-tags">
+          <span class="pb-tag teal">MAS Veritas Contributor</span>
+          <span class="pb-tag teal">FEAT Ethics Co-Author</span>
+          <span class="pb-tag teal">LLM & Agentic AI Architecture</span>
+          <span class="pb-tag teal">LLM Governance Platforms</span>
+          <span class="pb-tag teal">Responsible AI & MRM</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Founders -->
+    <div class="founders-grid">
+
+      <!-- Sourabh -->
+      <div class="founder-card fc-h1 reveal d1">
+        <div class="fc-header">
+          <div class="fc-avatar">SH</div>
+          <div class="fc-name">Sourabh Haldar</div>
+          <div class="fc-role">Co-Founder · Cybersecurity, Threat Intelligence & AI Risk</div>
+          <div class="fc-tagline">20+ years of threat-led security and AI risk leadership in global financial services — from MITRE ATT&CK-aligned threat modelling to board-level intelligence briefings at a Tier-1 global bank.</div>
+        </div>
+        <div class="fc-quote">
+          "I have implemented the same control, governance, and risk disciplines — across cyber, AI, and data — that I now deliver as a service. This is operational experience, not advisory opinion."
+        </div>
+        <div class="fc-body">
+          <div class="fc-stats">
+            <div class="fc-stat"><div class="fc-stat-val">50%+</div><div class="fc-stat-label">reduction in enterprise technology risk exposure at a Tier-1 bank</div></div>
+            <div class="fc-stat"><div class="fc-stat-val">$10M+</div><div class="fc-stat-label">annualised benefits from risk automation and control rationalisation</div></div>
+            <div class="fc-stat"><div class="fc-stat-val">200+</div><div class="fc-stat-label">critical applications assessed via MITRE ATT&CK threat modelling</div></div>
+          </div>
+          <div class="fc-highlights">
+            <div class="fc-highlight">
+              <div class="fc-hi-icon">🎯</div>
+              <div class="fc-hi-text"><strong>Senior Director, Technology Operations Risk & Controls — Standard Chartered (Aug 2024–Present)</strong><span>Maintains comprehensive threat scenario library across nation-state, cybercriminal, ransomware, and supply chain actors mapped to MITRE ATT&CK · Delivers executive threat intelligence briefings and quarterly risk workshops · Led AI/Copilot risk assessments for 300+ users · Reduced shadow AI risk exposure 25%</span></div>
+            </div>
+            <div class="fc-highlight">
+              <div class="fc-hi-icon">🏛️</div>
+              <div class="fc-hi-text"><strong>Senior Director, Cyber Risk Operations & Governance Lead, Group CISO — Standard Chartered (Jan 2022–Aug 2024)</strong><span>Intelligence-led assessment framework across 15 business units · MITRE ATT&CK-aligned risk assessments across 200+ critical applications · Board and ExCo-level cyber threat intelligence dashboards (200+ KPIs) · Enterprise risk exposure reduced 50%+</span></div>
+            </div>
+            <div class="fc-highlight">
+              <div class="fc-hi-icon">🔒</div>
+              <div class="fc-hi-text"><strong>Lead, Information & Cybersecurity Policy Implementation, Group CISO — Standard Chartered (Nov 2019–Dec 2021)</strong><span>Threat-led cybersecurity framework across APAC — Singapore, Hong Kong, India · Zero major regulatory findings across multi-year MAS and internal audit examinations · Control effectiveness methodology anchored to real-world threat scenarios</span></div>
+            </div>
+            <div class="fc-highlight">
+              <div class="fc-hi-icon">📰</div>
+              <div class="fc-hi-text"><strong>Published Interview — Cyber Security Hub (Feb 2023)</strong><span>Expert interview on cyber resilience vs. cyber risk management — featured by Cyber Security Hub, one of the leading global cybersecurity publications. Covered phishing threat vectors, IoT attack surfaces, and intelligence-driven defence strategy. <a href="https://www.cshub.com/threat-defense/interviews/what-is-the-difference-between-cyber-risk-management-and-cyber-resilience" target="_blank" style="color:var(--navy3);text-decoration:underline;">Read the interview →</a></span></div>
+            </div>
+            <div class="fc-highlight">
+              <div class="fc-hi-icon">🎤</div>
+              <div class="fc-hi-text"><strong>Conference Speaker & Industry Engagement</strong><span>Panel speaker — InsuranceAsia News Conference: "Anatomy of a Hack" · Attendee & contributor — Post-Quantum Cryptography Working Group Conference, Kuala Lumpur · Active member: ISACA Singapore, FSISAC, ISC2 information-sharing communities</span></div>
+            </div>
+            <div class="fc-highlight">
+              <div class="fc-hi-icon">💳</div>
+              <div class="fc-hi-text"><strong>Payments & AI Security Specialist</strong><span>Led threat assessments covering SWIFT messaging vulnerabilities, Digital Assets exposure, and Trade settlement risks · Governs AI-specific attack surfaces: prompt injection, model theft, deepfake fraud — with $25M+ documented losses across the sector in 2024</span></div>
+            </div>
+          </div>
+          <div class="fc-certs">
+            <span class="fc-cert">CISM (ISACA)</span>
+            <span class="fc-cert">PMP (Project Management Professional)</span>
+            <span class="fc-cert">MBA Honours — IE Business School</span>
+            <span class="fc-cert">B.Tech Honours — MNIT India</span>
+            <span class="fc-cert">MITRE ATT&CK</span>
+            <span class="fc-cert">NIST CSF</span>
+            <span class="fc-cert">MAS TRM · HKMA</span>
+            <span class="fc-cert">ISO 27001</span>
+            <span class="fc-cert">ICF-Trained Leadership Coach</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Murari -->
+      <div class="founder-card fc-h2 reveal d2">
+        <div class="fc-header">
+          <div class="fc-avatar">MM</div>
+          <div class="fc-name">Murari Mohan</div>
+          <div class="fc-role">Co-Founder · LLM Architecture, Responsible AI & AI Governance</div>
+          <div class="fc-tagline">16 years delivering end-to-end AI transformation in global financial services — from agentic LLM architecture and GenAI guardrail engineering to enterprise AI governance platforms and MAS Veritas policy authorship.</div>
+        </div>
+        <div class="fc-quote">
+          "Responsible AI governance is not a policy exercise — it is an engineering discipline embedded from architecture through production observability. I have built it at scale across APAC, EMEA, and North America."
+        </div>
+        <div class="fc-body">
+          <div class="fc-stats">
+            <div class="fc-stat"><div class="fc-stat-val">90%+</div><div class="fc-stat-label">response accuracy on Compliance AI Agent deployed at Nomura</div></div>
+            <div class="fc-stat"><div class="fc-stat-val">70%</div><div class="fc-stat-label">reduction in compliance support cycle times via agentic AI</div></div>
+            <div class="fc-stat"><div class="fc-stat-val">5</div><div class="fc-stat-label">global Tier-1 institutions where AI governance delivered at production scale</div></div>
+          </div>
+          <div class="fc-highlights">
+            <div class="fc-highlight">
+              <div class="fc-hi-icon">📜</div>
+              <div class="fc-hi-text"><strong>MAS Veritas FEAT Case Studies — Named Contributor (2022)</strong><span>Co-developed the FEAT Principles Assessment methodology and authored case study content — the MAS Veritas Document 4 is now a benchmark used by banks, regulators, and industry bodies across APAC financial services</span></div>
+            </div>
+            <div class="fc-highlight">
+              <div class="fc-hi-icon">🏗️</div>
+              <div class="fc-hi-text"><strong>Associate Director (ED), AI LLM Architecture & Responsible AI — Accenture (Aug 2025–Present)</strong><span>Lead architect for enterprise-scale LLM platforms and Responsible AI governance · C-suite advisory on AI reimagination · MAS Veritas and FEAT principles embedded across AI lifecycle · Certified facilitator — Accenture's 'Reinvention with Agentic AI' enterprise programme</span></div>
+            </div>
+            <div class="fc-highlight">
+              <div class="fc-hi-icon">⚙️</div>
+              <div class="fc-hi-text"><strong>VP, GenAI & LLM Products — Nomura Singapore (2022–2025)</strong><span>Pioneered GenAI and LLM adoption for the Global Data Office · Architected enterprise LLM Governance Platform covering full model lifecycle · Built RM Advisor AI Agent (Wealth) and Compliance AI Agent · Designed real-time guardrail services: hallucination detection, bias scoring, toxicity filtering · AI-driven Behaviour Risk Index (BRI) for trader conduct monitoring</span></div>
+            </div>
+            <div class="fc-highlight">
+              <div class="fc-hi-icon">🇸🇬</div>
+              <div class="fc-hi-text"><strong>VP, Responsible & Ethical AI — UOB Singapore (2019–2022)</strong><span>Co-created UOB's FEAT AI Ethics Framework — Singapore's most comprehensive bank-level Responsible AI framework · Led MAS Veritas implementation across the full AI lifecycle · Directly informed the published MAS Document 4, now an industry benchmark across APAC</span></div>
+            </div>
+            <div class="fc-highlight">
+              <div class="fc-hi-icon">🎤</div>
+              <div class="fc-hi-text"><strong>Thought Leadership & Industry Engagement</strong><span>Panellist — SuperAI 2024, Singapore: 'Financial Intelligence: How AI is Reshaping Finance' (5,000+ AI leaders, 50+ countries) · Featured Thinkfluencer on Tiger Hall — practitioner insights on LLM governance and Responsible AI strategy to a global business leader audience</span></div>
+            </div>
+            <div class="fc-highlight">
+              <div class="fc-hi-icon">🔬</div>
+              <div class="fc-hi-text"><strong>AI Architecture Expertise</strong><span>Agentic AI design: RM Advisor Agent, Compliance Agent, ATS for HR · LLM guardrail services and GenAI platform engineering across OpenAI, Azure, AWS, Dataiku, Snowflake · Enterprise knowledge-graph and AI-powered testing agents for global consumer banking clients at Accenture</span></div>
+            </div>
+          </div>
+          <div class="fc-certs">
+            <span class="fc-cert">Certificate, AI Ethics & Governance — NTU Singapore</span>
+            <span class="fc-cert">Agentic AI Facilitator — Accenture (Credly Verified)</span>
+            <span class="fc-cert">M.Stat (First Class) — Indian Statistical Institute</span>
+            <span class="fc-cert">B.Stat (First Class) — Indian Statistical Institute</span>
+            <span class="fc-cert">HBX CORe — Harvard Business School</span>
+            <span class="fc-cert">MAS Veritas Contributor</span>
+            <span class="fc-cert">FEAT Framework Co-Author</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- WHY PRAJNAGOV -->
+<section id="why">
+  <div class="container">
+    <div class="reveal" style="text-align:center;max-width:580px;margin:0 auto 0.5rem;">
+      <div class="section-eyebrow on-dark" style="justify-content:center;">Why PrajnaGov</div>
+      <h2 class="section-title on-dark">Six reasons clients<br><em>choose us over the alternatives.</em></h2>
+    </div>
+    <div class="why-grid">
+      <div class="why-card reveal d1"><div class="why-icon">🏛️</div><h3>Operational depth, not policy advice</h3><p>Built from 20+ years of first-line threat intelligence, cybersecurity, and AI governance at global financial institutions — MITRE ATT&CK-aligned threat modelling, LLM guardrail engineering, and board-level intelligence briefings delivered in practice.</p></div>
+      <div class="why-card reveal d2"><div class="why-icon">📜</div><h3>Regulatory authorship — not just compliance</h3><p>Our team co-authored Singapore's FEAT AI Ethics framework and contributed to the MAS Veritas Case Studies — now an industry benchmark across APAC. We don't just follow standards; we helped write them.</p></div>
+      <div class="why-card reveal d3"><div class="why-icon">🎯</div><h3>Right-sized for mid-market</h3><p>Big 4 charge $300K–$1M and take 6–18 months. We deliver a complete AI governance assessment in 4–8 weeks from $19K — designed for organisations that need governance, not a transformation programme.</p></div>
+      <div class="why-card reveal d1"><div class="why-icon">⚡</div><h3>Threat-led, not tick-box</h3><p>Our AI security assessments are built on MITRE ATT&CK-mapped threat scenarios, real-world threat intelligence, and purple team testing — the same disciplines applied across 200+ critical applications at Standard Chartered.</p></div>
+      <div class="why-card reveal d2"><div class="why-icon">🌏</div><h3>India and ASEAN by design</h3><p>India-first. Deep understanding of India AI Guidelines, RBI, SEBI, MAS TRM, MAS Veritas, HKMA, and EU AI Act requirements. APAC regulatory fluency built over 20 years — not learned from a framework document.</p></div>
+      <div class="why-card reveal d3"><div class="why-icon">📋</div><h3>Evidence, not opinions</h3><p>Every engagement produces an audit-ready evidence pack your board, regulator, or procurement partner can rely on — AI System Register, AI Risk Assessment, LLM guardrail specifications, Policy Suite, and signed-off Assurance Report.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="container">
+    <div class="contact-layout">
+      <div class="reveal">
+        <div class="section-eyebrow">Get in Touch</div>
+        <h2 class="section-title">Start with a<br><em>conversation.</em></h2>
+        <div class="contact-info">
+          <p>The first step is always a 30-minute conversation — no pitch, no agenda. We want to understand where your AI risk exposure sits today and whether a Readiness Assessment would be useful.</p>
+          <p>If you are an IT services exporter facing EU client governance demands, a fintech navigating RBI AI guidance, or a mid-market firm rolling out GenAI tools — we should talk.</p>
+        </div>
+        <div class="contact-details">
+          <div class="ci"><div class="ci-icon">✉️</div><div class="ci-text"><a href="mailto:hsourabh@gmail.com">hsourabh@gmail.com</a><span>Sourabh Haldar · Typically respond within 24 hours</span></div></div>
+          <div class="ci"><div class="ci-icon">✉️</div><div class="ci-text"><a href="mailto:mcubesvp@gmail.com">mcubesvp@gmail.com</a><span>Murari Mohan · AI governance & ethics enquiries</span></div></div>
+          <div class="ci"><div class="ci-icon">📞</div><div class="ci-text"><a href="tel:+6582006792">+65 8200 6792</a><span>Singapore · WhatsApp available</span></div></div>
+          <div class="ci"><div class="ci-icon">📞</div><div class="ci-text"><a href="tel:+6596359532">+65 9635 9532</a><span>Singapore · WhatsApp available</span></div></div>
+          <div class="ci"><div class="ci-icon">💼</div><div class="ci-text"><a href="https://linkedin.com/in/sourabh-haldar-0070188" target="_blank">linkedin.com/in/sourabh-haldar-0070188</a><span>Sourabh · LinkedIn</span></div></div>
+          <div class="ci"><div class="ci-icon">💼</div><div class="ci-text"><a href="https://linkedin.com/in/murari-mohan-a36343b" target="_blank">linkedin.com/in/murari-mohan-a36343b</a><span>Murari · LinkedIn</span></div></div>
+        </div>
+        <div class="first-offer">
+          <div class="fo-title">First Engagement Offer</div>
+          <div class="fo-body">Fixed-price AI Governance Readiness Assessment — <strong>$19,000</strong> for organisations up to 500 employees. Delivered in 4 weeks. Includes AI System Register and AI Risk Assessment. No surprises on cost.</div>
+        </div>
+      </div>
+      <div class="reveal d1">
+        <div class="contact-form">
+          <div class="cf-title">Request a conversation</div>
+          <div class="fg-row">
+            <div class="fg"><label>Full Name</label><input type="text" placeholder="Your name"></div>
+            <div class="fg"><label>Organisation</label><input type="text" placeholder="Company name"></div>
+          </div>
+          <div class="fg"><label>Email Address</label><input type="email" placeholder="you@company.com"></div>
+          <div class="fg-row">
+            <div class="fg"><label>Your Role</label>
+              <select>
+                <option value="" disabled selected>Select role</option>
+                <option>Chief Risk Officer</option>
+                <option>Chief Information Security Officer</option>
+                <option>Head of Compliance</option>
+                <option>Chief Technology Officer</option>
+                <option>CEO / Founder</option>
+                <option>Board Member</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div class="fg"><label>Country</label>
+              <select>
+                <option value="" disabled selected>Select country</option>
+                <option>India</option>
+                <option>Singapore</option>
+                <option>Philippines</option>
+                <option>Indonesia</option>
+                <option>Malaysia</option>
+                <option>United Kingdom</option>
+                <option>Other</option>
+              </select>
+            </div>
+          </div>
+          <div class="fg"><label>What prompted this enquiry?</label><textarea placeholder="e.g. EU client audit requirement, regulator inquiry, board question, GenAI rollout planning..."></textarea></div>
+          <button class="cf-submit" id="submitBtn">Request a Conversation →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container footer-inner">
+    <div>
+      <div class="footer-logo">Prajna<span>Gov</span></div>
+      <div class="footer-sub">AI Safety, Security & Governance as a Service</div>
+    </div>
+    <ul class="footer-links">
+      <li><a href="#problem">The Problem</a></li>
+      <li><a href="#services">Services</a></li>
+      <li><a href="#methodology">Methodology</a></li>
+      <li><a href="#team">Team</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <div class="footer-copy">
+      <div style="color:rgba(255,255,255,0.45);font-size:0.82rem;">Sourabh Haldar & Murari Mohan · Singapore</div>
+      <div style="margin-top:0.3rem;">© 2026 PrajnaGov. All rights reserved.</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Scroll reveal
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// Nav scroll
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => { nav.classList.toggle('scrolled', window.scrollY > 60); }, { passive: true });
+
+// Active nav link
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('.nav-links a');
+window.addEventListener('scroll', () => {
+  let cur = '';
+  sections.forEach(s => { if (window.scrollY >= s.offsetTop - 130) cur = s.id; });
+  navLinks.forEach(a => { a.style.color = a.getAttribute('href') === '#' + cur ? 'var(--gold2)' : ''; });
+}, { passive: true });
+
+// Form submit
+document.getElementById('submitBtn').addEventListener('click', (e) => {
+  e.preventDefault();
+  const btn = e.target;
+  btn.textContent = '✓ Message sent — we will be in touch within 24 hours';
+  btn.style.background = 'var(--teal)';
+  setTimeout(() => { btn.textContent = 'Request a Conversation →'; btn.style.background = ''; }, 5000);
+});
+</script>
+</body>
+</html>
